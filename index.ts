@@ -13,10 +13,9 @@ const io = new Server(server, {
 });
 
 io.on('connection', async socket => {
-  socket.on('appId', raw => {
+  socket.on('appId', appId => {
     // we make the socket (user) to join a room with a name of the app id
-    const data = JSON.parse(raw);
-    socket.join(data.appId);
+    socket.join(appId);
   });
 });
 
@@ -24,9 +23,12 @@ io.on('connection', async socket => {
 const getMessage = () => {
   // something happens, which after we have to send the stream message to the client
   // ...
-  // emit a message to the client, who has previously joined a room with a name of the app id
+  // emit a message to the client(s), who have previously joined a room with a name of the app id
   io.to('appId') // change 'appId' here with the actual application id as string
-    .emit('typeOfMessage', 'Message content'); // change 'typeOfMessage' for example with 'success', 'warning', 'error', 'info'; second argument is the actual content to be streamed to the client
+    .emit('newStatus', 
+    { severity: 'SEVERITY', // replace 'SEVERITY' with 'info', 'warning', 'error', 'success'
+      message: 'Example' // replace 'Example' with status message
+    });
 };
 
 server.listen(port, () => console.log(`Connected to ${port}`));
