@@ -6,7 +6,11 @@ const port = 1234;
 const app = express();
 const server = createServer(app);
 
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000' // replace the value with the front-end base url
+  }
+});
 
 io.on('connection', async socket => {
   socket.on('appId', raw => {
