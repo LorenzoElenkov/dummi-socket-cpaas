@@ -1,7 +1,7 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import cors from 'cors';
+import cors from "cors";
 
 const port = 1234;
 const app = express();
@@ -14,26 +14,55 @@ const io = new Server(server, {
   },
 });
 
-io.on('connection', (socket) => {
-  console.log('A user connected');
+function getRandomInt() {
+  return Math.floor(Math.random() * 5);
+}
+const messageTemplates = [
+  {
+    type: "initialize",
+    severity: "info",
+    message: "Initialize app works",
+  },
+  {
+    type: "build",
+    severity: "info",
+    message: "Build message",
+  },
+  {
+    type: "deploy",
+    severity: "info",
+    message: "Deployment message",
+  },
+  {
+    type: "cleanup",
+    severity: "info",
+    message: "Cleanup update",
+  },
+  {
+    type: "postProcess",
+    severity: "info",
+    message: "Post-processing in the works",
+  },
+];
 
-  socket.on('joinRoom', (roomId) => {
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("joinRoom", (roomId) => {
     socket.join(roomId);
     console.log(`User joined room ${roomId}`);
 
     setInterval(() => {
-      const message = {
-        type: "initialize",
-        severity: "info",
-        message: "Initialize app works"
-      }
-      console.log(message);
-      io.to(roomId).emit('message', message); // Emit to specific room
-    }, 10000);
+      const randomIndex = getRandomInt();
+      console.log(randomIndex)
+      const randomMessage = messageTemplates[randomIndex];
+      const log = `${new Date().toLocaleTimeString()}: ${randomMessage}`; // we could send the date from the backend as well
+      io.to(roomId).emit("message", randomMessage); // Emit to specific room
+    }, 1000);
   });
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
   });
 });
 
