@@ -1,7 +1,7 @@
-import express from "express";
-import { createServer } from "http";
-import { Server } from "socket.io";
-import cors from "cors";
+import express from 'express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import cors from 'cors';
 
 const port = 1234;
 const app = express();
@@ -10,8 +10,8 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000", // replace the value with the front-end base url
-  },
+    origin: 'http://localhost:3000' // replace the value with the front-end base url
+  }
 });
 
 function getRandomInt() {
@@ -19,50 +19,49 @@ function getRandomInt() {
 }
 const messageTemplates = [
   {
-    type: "initialize",
-    severity: "info",
-    message: "Initialize app works",
+    type: 'initialize',
+    severity: 'info',
+    message: 'Initialize app works'
   },
   {
-    type: "build",
-    severity: "info",
-    message: "Build message",
+    type: 'build',
+    severity: 'info',
+    message: 'Build message'
   },
   {
-    type: "deploy",
-    severity: "info",
-    message: "Deployment message",
+    type: 'deploy',
+    severity: 'info',
+    message: 'Deployment message'
   },
   {
-    type: "cleanup",
-    severity: "info",
-    message: "Cleanup update",
+    type: 'cleanup',
+    severity: 'info',
+    message: 'Cleanup update'
   },
   {
-    type: "postProcess",
-    severity: "info",
-    message: "Post-processing in the works",
-  },
+    type: 'postProcess',
+    severity: 'info',
+    message: 'Post-processing in the works'
+  }
 ];
 
-io.on("connection", (socket) => {
-  console.log("A user connected");
+io.on('connection', socket => {
+  console.log('A user connected');
 
-  socket.on("joinRoom", (roomId) => {
+  socket.on('joinRoom', roomId => {
     socket.join(roomId);
     console.log(`User joined room ${roomId}`);
 
     setInterval(() => {
       const randomIndex = getRandomInt();
-      console.log(randomIndex)
       const randomMessage = messageTemplates[randomIndex];
-      const log = `${new Date().toLocaleTimeString()}: ${randomMessage}`; // we could send the date from the backend as well
-      io.to(roomId).emit("message", randomMessage); // Emit to specific room
+      const log = { ...randomMessage, dateTime: new Date().toLocaleTimeString() }; // we could send the date from the backend as well
+      io.to(roomId).emit('message', log); // Emit to specific room
     }, 1000);
   });
 
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
   });
 });
 
