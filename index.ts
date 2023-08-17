@@ -54,10 +54,9 @@ io.on("connection", (socket) => {
 
     setInterval(() => {
       const randomIndex = getRandomInt();
-      console.log(randomIndex)
       const randomMessage = messageTemplates[randomIndex];
-      const log = `${new Date().toLocaleTimeString()}: ${randomMessage}`; // we could send the date from the backend as well
-      io.to(roomId).emit("message", randomMessage); // Emit to specific room
+      const logTime = `${new Date().toLocaleTimeString()}`; // we could send the date from the backend as well
+      io.to(roomId).emit("message", { ...randomMessage, dateTime: logTime }); // Emit to specific room
     }, 1000);
   });
 
